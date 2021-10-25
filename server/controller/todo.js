@@ -24,10 +24,10 @@ export const createTodo = async (req, res) => {
 export const updateTodo = async (req, res) => {    
     try {
         const id = req.params.id
-        const todo = req.body
+        const completed = req.body.completed
         if(!mongoose.Types.ObjectId.isValid(id)) res.status(404).json({message: 'Todo Id Not Exist'})
 
-        const updatedTodo = await Todo.findByIdAndUpdate(id, {...todo, _id:id}, {new:true})
+        const updatedTodo = await Todo.findByIdAndUpdate(id, {completed: completed}, {new:true})
         res.status(200).json(updatedTodo)
     } catch (error) {
         res.status(404).json({message: error.message})

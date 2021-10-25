@@ -11,7 +11,7 @@ app.use(bodyParser.json({ limit: "30mb", extended:'true'}))
 app.use(bodyParser.urlencoded({ limit: "30mb", extended:'true'}))
 app.use(cors())
 
-app.use('', router)
+app.use('/todo', router)
 
 const CONNECTION_URL =  "mongodb://myUserAdmin:abc123@localhost:27017/?authSource=admin"
 const PORT = process.env.PORT || 5000
