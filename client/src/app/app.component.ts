@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PayService } from './services/pay.service';
 import { TodoService } from './services/todo.service';
-import { Todo } from './todo';
 
 @Component({
   selector: 'app-root',
@@ -13,15 +14,25 @@ export class AppComponent {
   todoName: String;
 
   constructor(
-    private service: TodoService
+    private todoService: TodoService,
+    private payService: PayService,
+    private route: ActivatedRoute,
+    public router: Router
   ){}
 
   ngOnInit():void{
+    this.route.queryParams.subscribe(params=>{
+      if(params.paymentId && params.PayerID && params.token){
+        console.log('token', params.token);
+        this.executePay(params.PayerID, params.paymentId)
+      }
+    })
+
     this.getTodo()
   }
 
   getTodo(){
-    this.service.getTodo('')
+    this.todoService.getTodo('/todo')
     .subscribe(res=>{
       console.log('res',res);
 
@@ -36,7 +47,7 @@ export class AppComponent {
       todoName: this.todoName,
       completed: false
     }
-    this.service.createTodo('', newTodo)
+    this.todoService.createTodo('/todo', newTodo)
     .subscribe(res=>{
       console.log('res',res);
 
@@ -51,7 +62,7 @@ export class AppComponent {
     let updatedTodo = {
       completed: e.target.checked?true:false
     }
-    this.service.updateTodo('/'+id, updatedTodo)
+    this.todoService.updateTodo('/todo/'+id, updatedTodo)
     .subscribe(res=>{
       console.log('res',res);
       this.todoList.forEach((element,index)=>{
@@ -63,12 +74,36 @@ export class AppComponent {
   }
 
   deleteTodo(id){
-    this.service.deleteTodo('/'+id)
+    this.todoService.deleteTodo('/todo/'+id)
     .subscribe(res=>{
       console.log('res',res);
       this.todoList.forEach((element,index)=>{
         if(element._id==id) this.todoList.splice(index,1);
       });
+    },err=>{
+      console.log('err', err['message']);
+    })
+  }
+
+  createPay(){
+    this.payService.createPay('/pay')
+    .subscribe(res=>{
+      console.log('res',res);
+      window.location.replace(res['resUrl']);
+    },err=>{
+      console.log('err', err['message']);
+    })
+  }
+
+  executePay(PayerID, paymentId){
+    let newPay = {
+      PayerID: PayerID,
+      paymentId: paymentId
+    }
+    this.payService.executePay('/pay', newPay)
+    .subscribe(res=>{
+      alert(res)
+      this.router.navigate([''])
     },err=>{
       console.log('err', err['message']);
     })

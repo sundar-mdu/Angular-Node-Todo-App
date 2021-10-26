@@ -19,7 +19,7 @@ export class TodoService {
     let options = {
       headers: httpHeaders
     }
-    return this.http.get(`${this.serverUrl}`, options)
+    return this.http.get(`${this.serverUrl}${url}`, options)
   }
 
   createTodo(url, newTodo){
@@ -29,7 +29,7 @@ export class TodoService {
     let options = {
       headers: httpHeaders
     }
-    return this.http.post(`${this.serverUrl}`, newTodo, options)
+    return this.http.post(`${this.serverUrl}${url}`, newTodo, options)
   }
 
   updateTodo(url, completedStatus){
